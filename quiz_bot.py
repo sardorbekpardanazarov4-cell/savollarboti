@@ -1,14 +1,14 @@
-# quiz_quizbot.py
+
 
 import telebot
 from telebot import types
 
-# 🔑 O'zingizning bot tokeningizni shu yerga yozing
+
 BOT_TOKEN = "8339772715:AAErZ2V55mLDcKO7imcxrb-ci6QrkBpZzbA"
 
 bot = telebot.TeleBot(BOT_TOKEN)
 
-# 🧠 Savollar dict ichida
+
 questions = {
     1: {
         "question": "Python da print ning vazifasi nima?",
@@ -27,28 +27,28 @@ questions = {
     }
 }
 
-# Foydalanuvchi holati va ballarini saqlash
+
 user_scores = {}
 user_states = {}
 
-# /start komandasi
+
 @bot.message_handler(commands=['start'])
 def start_message(message):
     user_id = message.chat.id
 
-    # Salomlashish xabari
+    
     bot.send_message(
         user_id,
         "👋 Assalomu alaykum!\nBotga xush kelibsiz!\n\nQuizzni boshlash uchun quyidagi tugmani bosing 👇"
     )
 
-    # "Savollarni boshlash" tugmasi
+
     markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
     start_button = types.KeyboardButton("▶️ Savollarni boshlash")
     markup.add(start_button)
     bot.send_message(user_id, "Tayyor bo‘lsangiz boshlaymiz!", reply_markup=markup)
 
-# Tugma bosilganda testni boshlash
+
 @bot.message_handler(func=lambda message: message.text == "▶️ Savollarni boshlash")
 def start_quiz(message):
     user_id = message.chat.id
@@ -56,7 +56,7 @@ def start_quiz(message):
     user_scores[user_id] = 0
     send_question(user_id, 1)
 
-# Savol yuborish funksiyasi
+
 def send_question(chat_id, q_id):
     if q_id not in questions:
         markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
@@ -75,12 +75,12 @@ def send_question(chat_id, q_id):
     
     bot.send_message(chat_id, f"❓ {q['question']}", reply_markup=markup)
 
-# Javobni tekshirish
+
 @bot.message_handler(func=lambda message: True)
 def check_answer(message):
     user_id = message.chat.id
 
-    # Agar foydalanuvchi testni /start bosmasdan yozsa
+    
     if user_id not in user_states:
         bot.send_message(user_id, "Boshlash uchun /start buyrug‘ini bosing.")
         return
@@ -102,5 +102,5 @@ def check_answer(message):
     user_states[user_id] += 1
     send_question(user_id, user_states[user_id])
 
-# Botni ishga tushuramiz
+
 bot.polling()
